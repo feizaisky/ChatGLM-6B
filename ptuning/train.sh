@@ -13,7 +13,7 @@ CUDA_VISIBLE_DEVICES=0 python3 main.py \
     --overwrite_output_dir \
     --max_source_length 64 \
     --max_target_length 64 \
-    --per_device_train_batch_size 1 \
+    --per_device_train_batch_size 32 \
     --per_device_eval_batch_size 1 \
     --gradient_accumulation_steps 16 \
     --predict_with_generate \
