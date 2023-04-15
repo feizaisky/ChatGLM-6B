@@ -1,15 +1,16 @@
 PRE_SEQ_LEN=128
 LR=2e-2
+P_NAME=TIKU
 
 CUDA_VISIBLE_DEVICES=0 python3 main.py \
     --do_train \
-    --train_file AdvertiseGen/train.json \
-    --validation_file AdvertiseGen/dev.json \
-    --prompt_column content \
-    --response_column summary \
+    --train_file AdvertiseGen/${P_NAME}/train.json \
+    --validation_file AdvertiseGen/${P_NAME}/dev.json \
+    --prompt_column prompt \
+    --response_column completion \
     --overwrite_cache \
     --model_name_or_path THUDM/chatglm-6b \
-    --output_dir output/adgen-chatglm-6b-pt-$PRE_SEQ_LEN-$LR \
+    --output_dir output/${P_NAME}-chatglm-6b-pt-$PRE_SEQ_LEN-$LR \
     --overwrite_output_dir \
     --max_source_length 64 \
     --max_target_length 64 \
