@@ -1,9 +1,21 @@
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer, AutoConfig
 import gradio as gr
 import mdtex2html
+import torch
+import os
 
 tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)
-model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).half().cuda()
+
+CHECKPOINT_PATH="/content/ChatGLM-6B/ptuning/output/adgen-chatglm-6b-pt-128-2e-2/checkpoint-3000"
+config = AutoConfig.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True, pre_seq_len=128)
+model = AutoModel.from_pretrained("THUDM/chatglm-6b", config=config, trust_remote_code=True).half().cuda()
+prefix_state_dict = torch.load(os.path.join(CHECKPOINT_PATH, "pytorch_model.bin"))
+new_prefix_state_dict = {}
+for k, v in prefix_state_dict.items():
+    if k.startswith("transformer.prefix_encoder."):
+        new_prefix_state_dict[k[len("transformer.prefix_encoder."):]] = v
+model.transformer.prefix_encoder.load_state_dict(new_prefix_state_dict)
+
 model = model.eval()
 
 """Override Chatbot.postprocess"""
